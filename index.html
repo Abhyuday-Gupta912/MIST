@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MIST Website</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <!-- Navigation Bar -->
+    <nav class="navbar">
+        <div class="logo">
+            <img src="mist logo.png" alt="MIST Logo" class="logo-img">
+        </div>
+        <div class="nav-buttons">
+            <button class="nav-btn active" data-page="home">Home</button>
+            <button class="nav-btn" data-page="glazing">Glazing MIST</button>
+            <button class="nav-btn" data-page="about">About Us</button>
+        </div>
+    </nav>
+
+    <!-- Home Page -->
+    <div id="home-page" class="page active">
+        <div class="image-gallery">
+            <div class="image-card">
+                <div class="image-placeholder">image 1</div>
+                <p class="image-description">Image description</p>
+            </div>
+            <div class="image-card">
+                <div class="image-placeholder">image 2</div>
+                <p class="image-description">Image description</p>
+            </div>
+            <div class="image-card">
+                <div class="image-placeholder">image 3</div>
+                <p class="image-description">Image description</p>
+            </div>
+        </div>
+        
+        <div class="interactive-section">
+            <div class="click-button-container">
+                <button class="click-button" id="clickMeBtn">
+                    <span class="triangle">▶</span>
+                    <span class="btn-text">click me</span>
+                </button>
+                <div class="click-message" id="clickMessage">YOU CLICKED THE BUTTON YAYYY!!!</div>
+            </div>
+            
+            <div class="instruction-text">
+                (on clicking the button, the text on the right appears<br>
+                and on clicking the button again, it disappears)
+            </div>
+        </div>
+    </div>
+
+    <!-- Glazing MIST Page -->
+    <div id="glazing-page" class="page">
+        <div class="glazing-content">
+            <div class="mist-logo-grid">
+                <img src="mist logo.png" alt="MIST Logo" class="logo-top">
+                <img src="mist logo.png" alt="MIST Logo" class="logo-left">
+                <img src="mist logo.png" alt="MIST Logo" class="logo-right">
+                <img src="mist logo.png" alt="MIST Logo" class="logo-bottom">
+            </div>
+            <p class="glazing-subtitle">MIST (Manipal Information Security Team) is the elite hacker squad that protects the campus from cyber threats while roasting people who still use "password123". These digital legends can explain SQL injection using dosa analogies and have CTF skills so sharp they could hack the attendance system (but won't, obviously).</p>
+            <p class="glazing-subtitle">The MIST crew makes cybersecurity cooler than Instagram reels and runs workshops where overconfident CS students learn that watching Mr. Robot doesn't make them hackers. They're the heroes who save Manipalites from Nigerian princes and convince them that their crush's birthday isn't a strong password.</p>
+        </div>
+    </div>
+
+    <!-- About Us Page -->
+    <div id="about-page" class="page">
+        <div class="about-content">
+            <div class="alert-section">
+                <button class="alert-button" id="alertBtn">press me pls</button>
+                <p class="alert-description">
+                    clicking on this button shows your name, registration number and phone number in a JS alert
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
