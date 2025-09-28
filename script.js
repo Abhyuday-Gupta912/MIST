@@ -8,6 +8,7 @@ const events = [
         time: "19:30",
         venue: "PVR Cinemas",
         location: "Mumbai, Maharashtra",
+        city: "mumbai",
         price: {
             regular: 300,
             premium: 500
@@ -23,6 +24,7 @@ const events = [
         time: "20:00",
         venue: "NSCI Dome",
         location: "Mumbai, Maharashtra",
+        city: "mumbai",
         price: {
             regular: 1500,
             premium: 3000
@@ -38,6 +40,7 @@ const events = [
         time: "19:30",
         venue: "Wankhede Stadium",
         location: "Mumbai, Maharashtra",
+        city: "mumbai",
         price: {
             regular: 800,
             premium: 2000
@@ -53,6 +56,7 @@ const events = [
         time: "19:00",
         venue: "Jamshed Bhabha Theatre",
         location: "Mumbai, Maharashtra",
+        city: "mumbai",
         price: {
             regular: 1200,
             premium: 2500
@@ -68,6 +72,7 @@ const events = [
         time: "20:30",
         venue: "Phoenix Marketcity",
         location: "Mumbai, Maharashtra",
+        city: "mumbai",
         price: {
             regular: 800,
             premium: 1500
@@ -83,6 +88,7 @@ const events = [
         time: "18:00",
         venue: "INOX Megaplex",
         location: "Mumbai, Maharashtra",
+        city: "mumbai",
         price: {
             regular: 350,
             premium: 600
@@ -98,6 +104,7 @@ const events = [
         time: "19:00",
         venue: "DY Patil Stadium",
         location: "Mumbai, Maharashtra",
+        city: "mumbai",
         price: {
             regular: 2500,
             premium: 5000
@@ -113,12 +120,111 @@ const events = [
         time: "21:00",
         venue: "The Comedy Store",
         location: "Mumbai, Maharashtra",
+        city: "mumbai",
         price: {
             regular: 500,
             premium: 800
         },
         description: "A night of hilarious stand-up performances.",
         icon: "fas fa-laugh"
+    },
+    // Delhi Events
+    {
+        id: 9,
+        title: "Iron Man 3",
+        category: "movies",
+        date: "2024-10-16",
+        time: "20:00",
+        venue: "PVR Select City Walk",
+        location: "Delhi, NCR",
+        city: "delhi",
+        price: {
+            regular: 400,
+            premium: 700
+        },
+        description: "Tony Stark's greatest adventure yet.",
+        icon: "fas fa-film"
+    },
+    {
+        id: 10,
+        title: "Ed Sheeran Concert",
+        category: "concerts",
+        date: "2024-10-22",
+        time: "19:30",
+        venue: "Jawaharlal Nehru Stadium",
+        location: "Delhi, NCR",
+        city: "delhi",
+        price: {
+            regular: 2000,
+            premium: 4000
+        },
+        description: "An intimate evening with Ed Sheeran.",
+        icon: "fas fa-music"
+    },
+    {
+        id: 11,
+        title: "Delhi Capitals vs Royal Challengers",
+        category: "sports",
+        date: "2024-10-28",
+        time: "19:30",
+        venue: "Feroz Shah Kotla",
+        location: "Delhi, NCR",
+        city: "delhi",
+        price: {
+            regular: 1000,
+            premium: 2500
+        },
+        description: "High-octane cricket action.",
+        icon: "fas fa-baseball-ball"
+    },
+    // Bangalore Events
+    {
+        id: 12,
+        title: "Black Panther",
+        category: "movies",
+        date: "2024-10-18",
+        time: "18:30",
+        venue: "Cinepolis Forum Mall",
+        location: "Bangalore, Karnataka",
+        city: "bangalore",
+        price: {
+            regular: 350,
+            premium: 600
+        },
+        description: "Wakanda forever!",
+        icon: "fas fa-film"
+    },
+    {
+        id: 13,
+        title: "Imagine Dragons Concert",
+        category: "concerts",
+        date: "2024-10-24",
+        time: "20:00",
+        venue: "Kanteerava Indoor Stadium",
+        location: "Bangalore, Karnataka",
+        city: "bangalore",
+        price: {
+            regular: 1800,
+            premium: 3500
+        },
+        description: "Thunder and lightning with Imagine Dragons.",
+        icon: "fas fa-music"
+    },
+    {
+        id: 14,
+        title: "Royal Challengers vs Mumbai Indians",
+        category: "sports",
+        date: "2024-10-26",
+        time: "19:30",
+        venue: "M. Chinnaswamy Stadium",
+        location: "Bangalore, Karnataka",
+        city: "bangalore",
+        price: {
+            regular: 1200,
+            premium: 3000
+        },
+        description: "The ultimate IPL clash.",
+        icon: "fas fa-baseball-ball"
     }
 ];
 
@@ -130,6 +236,8 @@ let isGridView = true;
 let showingFavorites = false;
 let currentSort = 'date';
 let currentPriceFilter = 'all';
+let currentUser = JSON.parse(localStorage.getItem('currentUser') || 'null');
+let selectedCity = localStorage.getItem('selectedCity') || 'All Cities';
 
 // DOM elements
 const eventsGrid = document.getElementById('eventsGrid');
@@ -145,8 +253,11 @@ const favoritesToggle = document.getElementById('favoritesToggle');
 
 // Initialize the app
 document.addEventListener('DOMContentLoaded', function() {
-    renderEvents(currentEvents);
     setupEventListeners();
+    updateCityDisplay();
+    updateLoginState();
+    // Apply initial filters including city
+    applyFiltersAndSort();
 });
 
 // Set up event listeners
@@ -538,6 +649,13 @@ renderEvents = function(eventsToRender) {
 function applyFiltersAndSort() {
     let filteredEvents = [...events];
     
+    // Apply city filter
+    if (selectedCity && selectedCity.toLowerCase() !== 'all cities') {
+        filteredEvents = filteredEvents.filter(event => 
+            event.city === selectedCity.toLowerCase()
+        );
+    }
+    
     // Apply category filter if not showing all
     const activeFilter = document.querySelector('.filter-btn.active');
     if (activeFilter && activeFilter.dataset.category !== 'all') {
@@ -673,8 +791,13 @@ function handleSearch() {
 function showNotification(message, type = 'success') {
     const notification = document.createElement('div');
     notification.className = `notification ${type}`;
+    
+    let icon = 'fa-check-circle';
+    if (type === 'error') icon = 'fa-exclamation-circle';
+    if (type === 'info') icon = 'fa-info-circle';
+    
     notification.innerHTML = `
-        <i class="fas ${type === 'success' ? 'fa-check-circle' : 'fa-exclamation-circle'}"></i>
+        <i class="fas ${icon}"></i>
         <span>${message}</span>
     `;
     
@@ -689,3 +812,258 @@ function showNotification(message, type = 'success') {
         setTimeout(() => notification.remove(), 300);
     }, 3000);
 }
+
+// Authentication Functions
+function openLoginModal() {
+    const loginModal = document.getElementById('loginModal');
+    loginModal.style.display = 'block';
+    document.body.style.overflow = 'hidden';
+    
+    // Reset forms
+    document.getElementById('loginForm').style.display = 'block';
+    document.getElementById('registerForm').style.display = 'none';
+}
+
+function closeLoginModal() {
+    const loginModal = document.getElementById('loginModal');
+    loginModal.style.display = 'none';
+    document.body.style.overflow = 'auto';
+}
+
+function switchToRegister() {
+    document.getElementById('loginForm').style.display = 'none';
+    document.getElementById('registerForm').style.display = 'block';
+}
+
+function switchToLogin() {
+    document.getElementById('loginForm').style.display = 'block';
+    document.getElementById('registerForm').style.display = 'none';
+}
+
+function handleLogin(event) {
+    event.preventDefault();
+    
+    const email = document.getElementById('loginEmail').value;
+    const password = document.getElementById('loginPassword').value;
+    
+    // Simulate login validation
+    if (email && password) {
+        // Create user object
+        const user = {
+            id: Math.random().toString(36).substr(2, 9),
+            name: email.split('@')[0].charAt(0).toUpperCase() + email.split('@')[0].slice(1),
+            email: email,
+            city: selectedCity,
+            loginTime: new Date().toISOString()
+        };
+        
+        // Store user
+        localStorage.setItem('currentUser', JSON.stringify(user));
+        currentUser = user;
+        
+        // Update UI
+        updateLoginState();
+        closeLoginModal();
+        
+        showNotification(`Welcome back, ${user.name}!`);
+    } else {
+        showNotification('Please fill in all fields', 'error');
+    }
+}
+
+function handleRegister(event) {
+    event.preventDefault();
+    
+    const name = document.getElementById('registerName').value;
+    const email = document.getElementById('registerEmail').value;
+    const phone = document.getElementById('registerPhone').value;
+    const city = document.getElementById('registerCity').value;
+    const password = document.getElementById('registerPassword').value;
+    const confirmPassword = document.getElementById('confirmPassword').value;
+    const agreeTerms = document.getElementById('agreeTerms').checked;
+    
+    // Validation
+    if (!name || !email || !phone || !city || !password || !confirmPassword) {
+        showNotification('Please fill in all fields', 'error');
+        return;
+    }
+    
+    if (password !== confirmPassword) {
+        showNotification('Passwords do not match', 'error');
+        return;
+    }
+    
+    if (!agreeTerms) {
+        showNotification('Please agree to the terms and conditions', 'error');
+        return;
+    }
+    
+    // Create user object
+    const user = {
+        id: Math.random().toString(36).substr(2, 9),
+        name: name,
+        email: email,
+        phone: phone,
+        city: city,
+        registrationTime: new Date().toISOString()
+    };
+    
+    // Store user
+    localStorage.setItem('currentUser', JSON.stringify(user));
+    currentUser = user;
+    
+    // Update selected city
+    selectedCity = city;
+    localStorage.setItem('selectedCity', selectedCity);
+    updateCityDisplay();
+    
+    // Update UI
+    updateLoginState();
+    closeLoginModal();
+    
+    showNotification(`Welcome to EventHub, ${user.name}!`);
+}
+
+function updateLoginState() {
+    const loginBtn = document.getElementById('loginBtn');
+    const userMenu = document.getElementById('userMenu');
+    const userName = document.getElementById('userName');
+    
+    if (currentUser) {
+        loginBtn.style.display = 'none';
+        userMenu.style.display = 'block';
+        userName.textContent = currentUser.name;
+    } else {
+        loginBtn.style.display = 'flex';
+        userMenu.style.display = 'none';
+    }
+}
+
+function logout() {
+    localStorage.removeItem('currentUser');
+    currentUser = null;
+    updateLoginState();
+    showNotification('You have been logged out successfully');
+}
+
+// City Selection Functions
+function openCityModal() {
+    const cityModal = document.getElementById('cityModal');
+    cityModal.style.display = 'block';
+    document.body.style.overflow = 'hidden';
+}
+
+function closeCityModal() {
+    const cityModal = document.getElementById('cityModal');
+    cityModal.style.display = 'none';
+    document.body.style.overflow = 'auto';
+}
+
+function selectCity(city) {
+    if (city === 'all') {
+        selectedCity = 'All Cities';
+    } else {
+        selectedCity = city.charAt(0).toUpperCase() + city.slice(1);
+    }
+    localStorage.setItem('selectedCity', selectedCity);
+    updateCityDisplay();
+    closeCityModal();
+    showNotification(`City changed to ${selectedCity}`);
+    
+    // Apply filters with new city
+    applyFiltersAndSort();
+}
+
+function updateCityDisplay() {
+    const cityDisplay = document.getElementById('selectedCity');
+    if (cityDisplay) {
+        cityDisplay.textContent = selectedCity;
+    }
+}
+
+// Contact Form Functions
+document.getElementById('contactForm')?.addEventListener('submit', function(event) {
+    event.preventDefault();
+    
+    const name = document.getElementById('contactName').value;
+    const email = document.getElementById('contactEmail').value;
+    const subject = document.getElementById('contactSubject').value;
+    const message = document.getElementById('contactMessage').value;
+    
+    if (name && email && subject && message) {
+        // Simulate form submission
+        const loadingOverlay = document.createElement('div');
+        loadingOverlay.className = 'loading-overlay';
+        loadingOverlay.innerHTML = '<div class="loading-spinner"></div>';
+        document.body.appendChild(loadingOverlay);
+        
+        setTimeout(() => {
+            loadingOverlay.remove();
+            
+            // Reset form
+            document.getElementById('contactForm').reset();
+            
+            showNotification('Your message has been sent successfully!');
+        }, 1500);
+    } else {
+        showNotification('Please fill in all required fields', 'error');
+    }
+});
+
+// User Profile Functions
+function showProfile() {
+    if (currentUser) {
+        alert(`Profile Information:\n\nName: ${currentUser.name}\nEmail: ${currentUser.email}\nCity: ${currentUser.city || selectedCity}`);
+    }
+}
+
+function showBookings() {
+    showNotification('Booking history feature will be available soon!', 'info');
+}
+
+function showFavorites() {
+    if (favorites.length > 0) {
+        showingFavorites = true;
+        favoritesToggle.classList.add('active');
+        applyFiltersAndSort();
+        showNotification(`Showing ${favorites.length} favorite events`);
+    } else {
+        showNotification('You have no favorite events yet!', 'info');
+    }
+}
+
+// Enhanced scroll animations with intersection observer
+const observerCallback = (entries) => {
+    entries.forEach(entry => {
+        if (entry.isIntersecting) {
+            entry.target.style.opacity = '1';
+            entry.target.style.transform = 'translateY(0)';
+            
+            // Add staggered animation for feature items
+            if (entry.target.classList.contains('feature-item') || 
+                entry.target.classList.contains('stat-item') || 
+                entry.target.classList.contains('contact-item')) {
+                const items = Array.from(entry.target.parentElement.children);
+                const index = items.indexOf(entry.target);
+                entry.target.style.transitionDelay = `${index * 0.1}s`;
+            }
+        }
+    });
+};
+
+const scrollObserver = new IntersectionObserver(observerCallback, {
+    threshold: 0.1,
+    rootMargin: '0px 0px -50px 0px'
+});
+
+// Observe elements when page loads
+document.addEventListener('DOMContentLoaded', function() {
+    const animatedElements = document.querySelectorAll('.feature-item, .stat-item, .contact-item, .about-text, .contact-form-container');
+    
+    animatedElements.forEach(el => {
+        el.style.opacity = '0';
+        el.style.transform = 'translateY(30px)';
+        el.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
+        scrollObserver.observe(el);
+    });
+});
