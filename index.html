@@ -3,80 +3,202 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MIST Website</title>
+    <title>EventHub - Your Ultimate Event Management Platform</title>
     <link rel="stylesheet" href="styles.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
 </head>
 <body>
-    <!-- Navigation Bar -->
-    <nav class="navbar">
-        <div class="logo">
-            <img src="mist logo.png" alt="MIST Logo" class="logo-img">
-        </div>
-        <div class="nav-buttons">
-            <button class="nav-btn active" data-page="home">Home</button>
-            <button class="nav-btn" data-page="glazing">Glazing MIST</button>
-            <button class="nav-btn" data-page="about">About Us</button>
-        </div>
-    </nav>
+    <!-- Header -->
+    <header class="header">
+        <nav class="navbar">
+            <div class="nav-brand">
+                <i class="fas fa-calendar-alt"></i>
+                <span>EventHub</span>
+            </div>
+            <div class="nav-links">
+                <a href="#events">Events</a>
+                <a href="#about">About</a>
+                <a href="#contact">Contact</a>
+                <button class="login-btn">Login</button>
+            </div>
+            <div class="hamburger">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+        </nav>
+    </header>
 
-    <!-- Home Page -->
-    <div id="home-page" class="page active">
-        <div class="image-gallery">
-            <div class="image-card">
-                <div class="image-placeholder">image 1</div>
-                <p class="image-description">Image description</p>
-            </div>
-            <div class="image-card">
-                <div class="image-placeholder">image 2</div>
-                <p class="image-description">Image description</p>
-            </div>
-            <div class="image-card">
-                <div class="image-placeholder">image 3</div>
-                <p class="image-description">Image description</p>
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="hero-content">
+            <h1>Discover Amazing Events</h1>
+            <p>Find and book tickets for concerts, movies, sports, and more!</p>
+            <div class="search-bar">
+                <input type="text" id="searchInput" placeholder="Search for events, venues, or categories...">
+                <button id="searchBtn"><i class="fas fa-search"></i></button>
             </div>
         </div>
-        
-        <div class="interactive-section">
-            <div class="click-button-container">
-                <button class="click-button" id="clickMeBtn">
-                    <span class="triangle">▶</span>
-                    <span class="btn-text">click me</span>
-                </button>
-                <div class="click-message" id="clickMessage">YOU CLICKED THE BUTTON YAYYY!!!</div>
+    </section>
+
+    <!-- Filter Section -->
+    <section class="filter-section">
+        <div class="container">
+            <h2>Browse Events</h2>
+            <div class="filter-controls">
+                <div class="filter-tabs">
+                    <button class="filter-btn active" data-category="all">All Events</button>
+                    <button class="filter-btn" data-category="movies">Movies</button>
+                    <button class="filter-btn" data-category="concerts">Concerts</button>
+                    <button class="filter-btn" data-category="sports">Sports</button>
+                    <button class="filter-btn" data-category="theater">Theater</button>
+                    <button class="filter-btn" data-category="comedy">Comedy</button>
+                </div>
+                <div class="advanced-filters">
+                    <select id="sortSelect" class="filter-dropdown">
+                        <option value="date">Sort by Date</option>
+                        <option value="price-low">Price: Low to High</option>
+                        <option value="price-high">Price: High to Low</option>
+                        <option value="popularity">Most Popular</option>
+                    </select>
+                    <select id="priceFilter" class="filter-dropdown">
+                        <option value="all">All Prices</option>
+                        <option value="0-500">Under ₹500</option>
+                        <option value="500-1000">₹500 - ₹1000</option>
+                        <option value="1000-2000">₹1000 - ₹2000</option>
+                        <option value="2000+">Above ₹2000</option>
+                    </select>
+                    <button class="view-toggle" id="viewToggle" title="Toggle Grid/List View">
+                        <i class="fas fa-th"></i>
+                    </button>
+                    <button class="favorites-toggle" id="favoritesToggle" title="Show Favorites">
+                        <i class="fas fa-heart"></i>
+                    </button>
+                </div>
             </div>
-            
-            <div class="instruction-text">
-                (on clicking the button, the text on the right appears<br>
-                and on clicking the button again, it disappears)
+        </div>
+    </section>
+
+    <!-- Events Grid -->
+    <section class="events-section" id="events">
+        <div class="container">
+            <div class="events-grid" id="eventsGrid">
+            </div>
+        </div>
+    </section>
+
+    <!-- Booking Modal -->
+    <div class="modal" id="bookingModal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <div class="modal-header">
+                <h2 id="modalEventTitle">Event Title</h2>
+                <p id="modalEventDate">Event Date & Time</p>
+            </div>
+            <div class="modal-body">
+                <div class="booking-details">
+                    <div class="venue-info">
+                        <h3>Venue Information</h3>
+                        <p id="modalVenue">Venue Name</p>
+                        <p id="modalLocation">Location</p>
+                    </div>
+                    <div class="ticket-selection">
+                        <h3>Select Tickets</h3>
+                        <div class="ticket-type">
+                            <label for="regularTickets">Regular Tickets</label>
+                            <div class="ticket-controls">
+                                <button type="button" class="qty-btn" onclick="changeQuantity('regular', -1)">-</button>
+                                <input type="number" id="regularTickets" value="0" min="0" max="10" readonly>
+                                <button type="button" class="qty-btn" onclick="changeQuantity('regular', 1)">+</button>
+                                <span class="price" id="regularPrice">₹500</span>
+                            </div>
+                        </div>
+                        <div class="ticket-type">
+                            <label for="premiumTickets">Premium Tickets</label>
+                            <div class="ticket-controls">
+                                <button type="button" class="qty-btn" onclick="changeQuantity('premium', -1)">-</button>
+                                <input type="number" id="premiumTickets" value="0" min="0" max="10" readonly>
+                                <button type="button" class="qty-btn" onclick="changeQuantity('premium', 1)">+</button>
+                                <span class="price" id="premiumPrice">₹800</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="booking-summary">
+                        <h3>Booking Summary</h3>
+                        <div class="summary-item">
+                            <span>Total Tickets:</span>
+                            <span id="totalTickets">0</span>
+                        </div>
+                        <div class="summary-item">
+                            <span>Total Amount:</span>
+                            <span id="totalAmount">₹0</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-secondary" onclick="closeModal()">Cancel</button>
+                <button class="btn-primary" onclick="confirmBooking()">Book Now</button>
             </div>
         </div>
     </div>
 
-    <!-- Glazing MIST Page -->
-    <div id="glazing-page" class="page">
-        <div class="glazing-content">
-            <div class="mist-logo-grid">
-                <img src="mist logo.png" alt="MIST Logo" class="logo-top">
-                <img src="mist logo.png" alt="MIST Logo" class="logo-left">
-                <img src="mist logo.png" alt="MIST Logo" class="logo-right">
-                <img src="mist logo.png" alt="MIST Logo" class="logo-bottom">
+    <!-- Success Modal -->
+    <div class="modal" id="successModal">
+        <div class="modal-content success-modal">
+            <div class="success-icon">
+                <i class="fas fa-check-circle"></i>
             </div>
-            <p class="glazing-subtitle">MIST (Manipal Information Security Team) is the elite hacker squad that protects the campus from cyber threats while roasting people who still use "password123". These digital legends can explain SQL injection using dosa analogies and have CTF skills so sharp they could hack the attendance system (but won't, obviously).</p>
-            <p class="glazing-subtitle">The MIST crew makes cybersecurity cooler than Instagram reels and runs workshops where overconfident CS students learn that watching Mr. Robot doesn't make them hackers. They're the heroes who save Manipalites from Nigerian princes and convince them that their crush's birthday isn't a strong password.</p>
+            <h2>Booking Confirmed!</h2>
+            <p>Your tickets have been successfully booked. You will receive a confirmation email shortly.</p>
+            <button class="btn-primary" onclick="closeSuccessModal()">Close</button>
         </div>
     </div>
 
-    <!-- About Us Page -->
-    <div id="about-page" class="page">
-        <div class="about-content">
-            <div class="alert-section">
-                <button class="alert-button" id="alertBtn">press me pls</button>
-                <p class="alert-description">
-                    clicking on this button shows your name, registration number and phone number in a JS alert
-                </p>
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h3>EventHub</h3>
+                    <p>Your ultimate destination for discovering and booking amazing events.</p>
+                    <div class="social-links">
+                        <a href="#"><i class="fab fa-facebook"></i></a>
+                        <a href="#"><i class="fab fa-twitter"></i></a>
+                        <a href="#"><i class="fab fa-instagram"></i></a>
+                        <a href="#"><i class="fab fa-youtube"></i></a>
+                    </div>
+                </div>
+                <div class="footer-section">
+                    <h4>Quick Links</h4>
+                    <ul>
+                        <li><a href="#events">Browse Events</a></li>
+                        <li><a href="#about">About Us</a></li>
+                        <li><a href="#contact">Contact</a></li>
+                        <li><a href="#">Help & Support</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h4>Categories</h4>
+                    <ul>
+                        <li><a href="#">Movies</a></li>
+                        <li><a href="#">Concerts</a></li>
+                        <li><a href="#">Sports</a></li>
+                        <li><a href="#">Theater</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h4>Contact Info</h4>
+                    <p><i class="fas fa-envelope"></i> info@eventhub.com</p>
+                    <p><i class="fas fa-phone"></i> +91 9350845982</p>
+                    <p><i class="fas fa-map-marker-alt"></i> Manipal, India</p>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2024 EventHub. All rights reserved.</p>
             </div>
         </div>
-    </div>
+    </footer>
 
     <script src="script.js"></script>
 </body>
